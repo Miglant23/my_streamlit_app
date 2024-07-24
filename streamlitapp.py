@@ -1,0 +1,159 @@
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import torch
+import torch.nn as nn
+import sys
+import streamlit.components.v1 as components
+
+
+st.write("""
+# Visualisation of the latent feautres of bender data
+Hello *world!*
+""")
+
+latent_plot_path=r'C:\Users\nakon\Desktop\my_streamlit_app\latent.html'
+try:
+    with open(latent_plot_path, 'r',encoding='utf-8') as f:
+        latent_html = f.read()
+    components.html(latent_html, height=500)
+except FileNotFoundError:
+    st.error(f"The file at {latent_plot_path} was not found.")
+except Exception as e:
+    st.error(f"An error occurred: {e}")
+
+umap_plot_path=r'C:\Users\nakon\Desktop\my_streamlit_app\umap.html'
+try:
+    with open(umap_plot_path, 'r',encoding='utf-8') as f:
+        umap_html = f.read()
+    components.html(umap_html, height=500)
+except FileNotFoundError:
+    st.error(f"The file at {umap_plot_path} was not found.")
+except Exception as e:
+    st.error(f"An error occurred: {e}")
+
+dataset=torch.load(r'C:\Users\nakon\Desktop\my_streamlit_app\validation_data_noise.pth')
+hash_map = {dataset[i][-1].item(): dataset[i] for i in range(len(dataset))}
+
+sample_index=st.number_input('Select the sample',min_value=0, max_value=len(dataset)-1,step=1)
+sample_data=hash_map.get(sample_index)
+#Plotting code
+clean_data=sample_data[1]
+clean_data_tensor = torch.tensor(clean_data).unsqueeze(0)
+label=sample_data[2].tolist()
+types=['Sine','Square','Triangular']
+type=types[label]
+frequency=sample_data[3].tolist()
+
+# Autoencoder Architecture
+class Conv1DAutoencoder(nn.Module):
+    def __init__(self):
+        super(Conv1DAutoencoder, self).__init__()
+
+        # Encoder
+        self.encoder = nn.Sequential(
+            nn.Conv1d(2, 16, kernel_size=3, stride=2, padding=1),
+            nn.ReLU(),
+            nn.BatchNorm1d(16),
+            nn.Dropout(0.1),
+
+            nn.Conv1d(16, 32, kernel_size=3, stride=2, padding=1),
+            nn.ReLU(),
+            nn.BatchNorm1d(32),
+            nn.Dropout(0.1),
+
+            nn.Conv1d(32, 64, kernel_size=3, stride=2, padding=1),
+            nn.ReLU(),
+            nn.BatchNorm1d(64),
+            nn.Dropout(0.1),
+
+            nn.Conv1d(64, 128, kernel_size=3, stride=2, padding=0),
+            nn.ReLU(),
+            nn.BatchNorm1d(128),
+            nn.Dropout(0.1),
+
+            nn.Conv1d(128, 256, kernel_size=3, stride=2, padding=0),  # Adjusted padding to 0
+            nn.ReLU(),
+            nn.BatchNorm1d(256),
+            nn.Dropout(0.1),
+
+            nn.Conv1d(256, 512, kernel_size=3, stride=2, padding=0),  # Adjusted padding to 0
+            nn.ReLU(),
+            nn.BatchNorm1d(512),
+            nn.Dropout(0.1),
+        )
+
+        # Latent space compression
+        self.flatten = nn.Flatten()
+        self.latent = nn.Linear(512 * 92, 256)
+
+        # Decoder
+        self.decoder_fc = nn.Linear(256, 512 * 92)
+        self.decoder = nn.Sequential(
+            nn.ConvTranspose1d(512, 256, kernel_size=3, stride=2, padding=0, output_padding=1),
+            nn.ReLU(),
+            nn.BatchNorm1d(256),
+            nn.Dropout(0.1),
+
+            nn.ConvTranspose1d(256, 128, kernel_size=3, stride=2, padding=0, output_padding=1),
+            nn.ReLU(),
+            nn.BatchNorm1d(128),
+            nn.Dropout(0.1),
+
+            nn.ConvTranspose1d(128, 64, kernel_size=3, stride=2, padding=0, output_padding=1),
+            nn.ReLU(),
+            nn.BatchNorm1d(64),
+            nn.Dropout(0.1),
+
+            nn.ConvTranspose1d(64, 32, kernel_size=3, stride=2, padding=1, output_padding=1),
+            nn.ReLU(),
+            nn.BatchNorm1d(32),
+            nn.Dropout(0.1),
+
+            nn.ConvTranspose1d(32, 16, kernel_size=3, stride=2, padding=1, output_padding=1),
+            nn.ReLU(),
+            nn.BatchNorm1d(16),
+            nn.Dropout(0.1),
+
+            nn.ConvTranspose1d(16, 2, kernel_size=3, stride=2, padding=1, output_padding=1),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        x = self.encoder(x)
+        x = self.flatten(x)
+        x = self.latent(x)
+        x = self.decoder_fc(x)
+        x = x.view(-1, 512, 92)  # Reshape to match the decoder input
+        x = self.decoder(x)
+        return x
+
+    def encode(self, x):
+        x = self.encoder(x)
+        x = self.flatten(x)
+        x = self.latent(x)
+        return x
+
+model_path = r'C:\Users\nakon\Desktop\UROP\Autoencoder_SMP\MainAutoencoder_V4_256D.pth'
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = Conv1DAutoencoder().to(device)
+model.load_state_dict(torch.load(model_path, map_location=device))
+model.to(device)
+model.eval()
+with torch.no_grad():
+    reconstructed=model(clean_data_tensor)
+
+fig, ax = plt.subplots(figsize=(10, 5))
+ax.set_title(f'Wave Type: {type}, Frequency: {frequency} Hz')
+ax.set_xlabel('Time steps')
+ax.set_ylabel('Normalised Magnitude')
+ax.plot(clean_data[0].flatten().tolist(), label='Input Signal')
+ax.plot(clean_data[1].flatten().tolist(), label='Output Signal')
+ax.plot(reconstructed[0,0,:].flatten().tolist(),linestyle='--', label='Reconstructed Input Signal')
+ax.plot(reconstructed[0,1,:].flatten().tolist(),linestyle='--', label='Reconstructed Output Signal')
+ax.legend()
+st.pyplot(fig)
+
+
+
+
