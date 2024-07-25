@@ -10,7 +10,7 @@ import os
 
 st.write("""
 # Visualisation of the latent feautres of bender data
-Hello *world!*
+Latent feautures have been obtained from using a convolutional autoencoder on twin channel bender signals, input and output. The data was able to be compressed into 256 latent feautures
 """)
 
 #latent_plot_path=r'C:\Users\nakon\Desktop\my_streamlit_app\latent.html'
@@ -40,7 +40,7 @@ dataset_path= os.path.join(os.path.dirname(__file__), 'validation_data_noise.pth
 dataset=torch.load(dataset_path)
 hash_map = {dataset[i][-1].item(): dataset[i] for i in range(len(dataset))}
 
-sample_index=st.number_input('Select the sample',min_value=0, max_value=len(dataset)-1,step=1)
+sample_index=st.number_input('Select the index of sample to be viewed',min_value=0, max_value=len(dataset)-1,step=1)
 sample_data=hash_map.get(sample_index)
 #Plotting code
 clean_data=sample_data[1]
