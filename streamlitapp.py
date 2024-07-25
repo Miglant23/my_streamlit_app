@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import sys
 import streamlit.components.v1 as components
+import os
 
 
 st.write("""
@@ -12,7 +13,8 @@ st.write("""
 Hello *world!*
 """)
 
-latent_plot_path=r'C:\Users\nakon\Desktop\my_streamlit_app\latent.html'
+#latent_plot_path=r'C:\Users\nakon\Desktop\my_streamlit_app\latent.html'
+latent_plot_path = os.path.join(os.path.dirname(__file__), 'latent.html')
 try:
     with open(latent_plot_path, 'r',encoding='utf-8') as f:
         latent_html = f.read()
@@ -22,7 +24,8 @@ except FileNotFoundError:
 except Exception as e:
     st.error(f"An error occurred: {e}")
 
-umap_plot_path=r'C:\Users\nakon\Desktop\my_streamlit_app\umap.html'
+#umap_plot_path=r'C:\Users\nakon\Desktop\my_streamlit_app\umap.html'
+umap_plot_path = os.path.join(os.path.dirname(__file__), 'umap.html')
 try:
     with open(umap_plot_path, 'r',encoding='utf-8') as f:
         umap_html = f.read()
@@ -32,7 +35,9 @@ except FileNotFoundError:
 except Exception as e:
     st.error(f"An error occurred: {e}")
 
-dataset=torch.load(r'C:\Users\nakon\Desktop\my_streamlit_app\validation_data_noise.pth')
+dataset_path== os.path.join(os.path.dirname(__file__), 'validation_data_noise.pth')
+#dataset=torch.load(r'C:\Users\nakon\Desktop\my_streamlit_app\validation_data_noise.pth')
+dataset=torch.load(dataset_path)
 hash_map = {dataset[i][-1].item(): dataset[i] for i in range(len(dataset))}
 
 sample_index=st.number_input('Select the sample',min_value=0, max_value=len(dataset)-1,step=1)
@@ -134,7 +139,8 @@ class Conv1DAutoencoder(nn.Module):
         x = self.latent(x)
         return x
 
-model_path = r'C:\Users\nakon\Desktop\UROP\Autoencoder_SMP\MainAutoencoder_V4_256D.pth'
+#model_path = r'C:\Users\nakon\Desktop\UROP\Autoencoder_SMP\MainAutoencoder_V4_256D.pth'
+model_path = os.path.join(os.path.dirname(__file__), 'MainAutoencoder_V4_256D.pth')
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = Conv1DAutoencoder().to(device)
 model.load_state_dict(torch.load(model_path, map_location=device))
