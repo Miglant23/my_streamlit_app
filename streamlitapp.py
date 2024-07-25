@@ -35,7 +35,7 @@ except FileNotFoundError:
 except Exception as e:
     st.error(f"An error occurred: {e}")
 
-dataset_path== os.path.join(os.path.dirname(__file__), 'validation_data_noise.pth')
+dataset_path= os.path.join(os.path.dirname(__file__), 'validation_data_noise.pth')
 #dataset=torch.load(r'C:\Users\nakon\Desktop\my_streamlit_app\validation_data_noise.pth')
 dataset=torch.load(dataset_path)
 hash_map = {dataset[i][-1].item(): dataset[i] for i in range(len(dataset))}
