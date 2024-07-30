@@ -186,6 +186,7 @@ st.pyplot(fig)
 new_dataset_path=os.path.join(os.path.dirname(__file__), 'dataset_new.pth')
 new_dataset=torch.load(new_dataset_path)
 new_data=new_dataset['data']
+new_data.permute(0,2,1)
 
 with torch.no_grad():
     reconstructed_new=model(new_data)
@@ -198,8 +199,8 @@ ax.set_xlabel('Time steps')
 ax.set_ylabel('Normalised Magnitude')
 ax.plot(new_data[new_sample_index,:,0].flatten().tolist(), label='Input Signal')
 ax.plot(new_data[new_sample_index,:,1].flatten().tolist(), label='Output Signal')
-ax.plot(reconstructed_new[new_sample_index,:,0].flatten().tolist(),linestyle='--', label='Reconstructed Input Signal')
-ax.plot(reconstructed_new[new_sample_index,:,1].flatten().tolist(),linestyle='--', label='Reconstructed Output Signal')
+ax.plot(reconstructed_new[new_sample_index,0,:].flatten().tolist(),linestyle='--', label='Reconstructed Input Signal')
+ax.plot(reconstructed_new[new_sample_index,1,:].flatten().tolist(),linestyle='--', label='Reconstructed Output Signal')
 ax.legend()
 st.pyplot(fig)    
 
