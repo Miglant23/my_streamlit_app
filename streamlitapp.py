@@ -24,6 +24,26 @@ except FileNotFoundError:
 except Exception as e:
     st.error(f"An error occurred: {e}")
 
+linearPCA_plot_path = os.path.join(os.path.dirname(__file__), 'linearPCA.html')
+try:
+    with open(linearPCA_plot_path, 'r',encoding='utf-8') as f:
+        latent_html = f.read()
+    components.html(linearPCA_html, height=500)
+except FileNotFoundError:
+    st.error(f"The file at {linearPCA_plot_path} was not found.")
+except Exception as e:
+    st.error(f"An error occurred: {e}")
+
+nonlinearPCA_plot_path = os.path.join(os.path.dirname(__file__), 'nonlinearPCA.html')
+try:
+    with open(nonlinearPCA_plot_path, 'r',encoding='utf-8') as f:
+        latent_html = f.read()
+    components.html(nonlinearPCA_html, height=500)
+except FileNotFoundError:
+    st.error(f"The file at {latent_plot_path} was not found.")
+except Exception as e:
+    st.error(f"An error occurred: {e}")        
+
 #umap_plot_path=r'C:\Users\nakon\Desktop\my_streamlit_app\umap.html'
 umap_plot_path = os.path.join(os.path.dirname(__file__), 'umap.html')
 try:
@@ -34,6 +54,8 @@ except FileNotFoundError:
     st.error(f"The file at {umap_plot_path} was not found.")
 except Exception as e:
     st.error(f"An error occurred: {e}")
+
+
 
 dataset_path= os.path.join(os.path.dirname(__file__), 'validation_data_noise.pth')
 #dataset=torch.load(r'C:\Users\nakon\Desktop\my_streamlit_app\validation_data_noise.pth')
