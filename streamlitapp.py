@@ -27,7 +27,7 @@ except Exception as e:
 linearPCA_plot_path = os.path.join(os.path.dirname(__file__), 'linearPCA.html')
 try:
     with open(linearPCA_plot_path, 'r',encoding='utf-8') as f:
-        latent_html = f.read()
+        linearPCA_html = f.read()
     components.html(linearPCA_html, height=500)
 except FileNotFoundError:
     st.error(f"The file at {linearPCA_plot_path} was not found.")
@@ -37,7 +37,7 @@ except Exception as e:
 nonlinearPCA_plot_path = os.path.join(os.path.dirname(__file__), 'nonlinearPCA.html')
 try:
     with open(nonlinearPCA_plot_path, 'r',encoding='utf-8') as f:
-        latent_html = f.read()
+        nonlinearPCA_html = f.read()
     components.html(nonlinearPCA_html, height=500)
 except FileNotFoundError:
     st.error(f"The file at {latent_plot_path} was not found.")
