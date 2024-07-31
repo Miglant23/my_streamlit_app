@@ -193,7 +193,8 @@ new_indices=new_dataset_load['indices']
 with torch.no_grad():
     reconstructed_new=model(new_signals)
 
-new_sample_index=st.number_input('Select the index of the new unseen data to be viewed',min_value=0, max_value=len(new_aignals)-1,step=1)
+new_sample_index=st.number_input('Select the index of the new unseen data to be viewed',min_value=0, max_value=len(new_signals)-1,step=1)
+
 
 #fig, ax = plt.subplots(figsize=(10, 5))
 #ax.set_title(f'Wave Type: {type}, Frequency: {frequency} Hz')
