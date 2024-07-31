@@ -197,7 +197,6 @@ new_sample_index=st.number_input('Select the index of the new unseen data to be 
 
 fig, axs = plt.subplots(nrows=2,ncols=1,figsize=(10, 5))
 axs[0].set_title(f'Wave Type: {new_labels[new_sample_index]}, Frequency: {new_frequencies[new_sample_index]} Hz')
-axs[0].set_xlabel('Time steps')
 axs[0].set_ylabel('Normalised Magnitude')
 axs[0].plot(new_signals[new_sample_index,0,:].flatten().tolist(), label='Input Signal')
 axs[0].plot(reconstructed_new[new_sample_index,0,:].flatten().tolist(),linestyle='--', label='Reconstructed Input Signal')
