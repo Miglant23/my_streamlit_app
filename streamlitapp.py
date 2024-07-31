@@ -186,6 +186,7 @@ current_dir = os.getcwd()
 new_dataset_path = os.path.join(current_dir, 'dataset_new.pth')
 new_dataset_load = torch.load(new_dataset_path)
 new_signals=new_dataset_load['data']
+new_signals=new_signals.permute(0,2,1).permute(0,2,1)
 new_frequencies=new_dataset_load['frequencies']
 new_labels=new_dataset_load['labels']
 new_indices=new_dataset_load['indices']
