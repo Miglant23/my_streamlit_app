@@ -10,7 +10,7 @@ import os
 
 st.write("""
 # Visualisation of the latent features of bender data
-Latent feautures have been obtained from using a convolutional autoencoder on twin channel bender signals, input and output. The data was able to be compressed into 256 latent feautures
+Latent features have been obtained from using a convolutional autoencoder on twin channel bender signals, input and output. The data was able to be compressed into 256 latent feautures
 """)
 
 #latent_plot_path=r'C:\Users\nakon\Desktop\my_streamlit_app\latent.html'
