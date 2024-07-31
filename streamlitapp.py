@@ -182,26 +182,28 @@ ax.plot(reconstructed[0,1,:].flatten().tolist(),linestyle='--', label='Reconstru
 ax.legend()
 st.pyplot(fig)
 
-
-new_dataset_path=os.path.join(os.path.dirname(__file__), 'dataset_new.pth')
-new_dataset=torch.load(new_dataset_path)
-new_data=new_dataset['data']
-new_data.permute(0,2,1)
+current_dir = os.getcwd()
+new_dataset_path = os.path.join(current_dir, 'dataset_new.pth')
+new_dataset_load = torch.load(new_dataset_path)
+new_signals=new_dataset_load['data']
+new_frequencies=new_dataset_load['frequencies']
+new_labels=new_dataset_load['labels']
+new_indices=new_dataset_load['indices']
 
 with torch.no_grad():
-    reconstructed_new=model(new_data)
+    reconstructed_new=model(new_signals)
 
-new_sample_index=st.number_input('Select the index of sample to be viewed',min_value=0, max_value=len(new_data)-1,step=1)
+new_sample_index=st.number_input('Select the index of the new unseen data to be viewed',min_value=0, max_value=len(new_aignals)-1,step=1)
 
-fig, ax = plt.subplots(figsize=(10, 5))
+#fig, ax = plt.subplots(figsize=(10, 5))
 #ax.set_title(f'Wave Type: {type}, Frequency: {frequency} Hz')
-ax.set_xlabel('Time steps')
-ax.set_ylabel('Normalised Magnitude')
-ax.plot(new_data[new_sample_index,:,0].flatten().tolist(), label='Input Signal')
-ax.plot(new_data[new_sample_index,:,1].flatten().tolist(), label='Output Signal')
-ax.plot(reconstructed_new[new_sample_index,0,:].flatten().tolist(),linestyle='--', label='Reconstructed Input Signal')
-ax.plot(reconstructed_new[new_sample_index,1,:].flatten().tolist(),linestyle='--', label='Reconstructed Output Signal')
-ax.legend()
-st.pyplot(fig)    
+#ax.set_xlabel('Time steps')
+#ax.set_ylabel('Normalised Magnitude')
+#ax.plot(new_data[new_sample_index,:,0].flatten().tolist(), label='Input Signal')
+#ax.plot(new_data[new_sample_index,:,1].flatten().tolist(), label='Output Signal')
+#ax.plot(reconstructed_new[new_sample_index,0,:].flatten().tolist(),linestyle='--', label='Reconstructed Input Signal')
+#ax.plot(reconstructed_new[new_sample_index,1,:].flatten().tolist(),linestyle='--', label='Reconstructed Output Signal')
+#ax.legend()
+#st.pyplot(fig)    
 
 
