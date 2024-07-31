@@ -213,7 +213,7 @@ axs[2].plot(new_signals[new_sample_index,1,:].flatten()-reconstructed_new[new_sa
 axs[2].legend()
 axs[2].set_xlabel('Time Steps')
 axs[2].set_ylabel('Error')
-axs[2].set_title('Original Sigal subtract the Reconstructed Signal')
+axs[2].set_title('Original Signal subtract the Reconstructed Signal')
 plt.subplots_adjust(hspace=1)
 st.pyplot(fig)    
 
