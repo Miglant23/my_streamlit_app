@@ -214,7 +214,7 @@ axs[2].legend()
 axs[2].set_xlabel('Time Steps')
 axs[2].set_ylabel('Error')
 axs[2].set_title('Original Sigal subtract the Reconstructed Signal')
-plt.subplots_adjust(hspace=0.5)
+plt.subplots_adjust(hspace=1)
 st.pyplot(fig)    
 
 
