@@ -195,16 +195,18 @@ with torch.no_grad():
 
 new_sample_index=st.number_input('Select the index of the new unseen data to be viewed',min_value=0, max_value=len(new_signals)-1,step=1)
 
-
-#fig, ax = plt.subplots(figsize=(10, 5))
-#ax.set_title(f'Wave Type: {type}, Frequency: {frequency} Hz')
-#ax.set_xlabel('Time steps')
-#ax.set_ylabel('Normalised Magnitude')
-#ax.plot(new_data[new_sample_index,:,0].flatten().tolist(), label='Input Signal')
-#ax.plot(new_data[new_sample_index,:,1].flatten().tolist(), label='Output Signal')
-#ax.plot(reconstructed_new[new_sample_index,0,:].flatten().tolist(),linestyle='--', label='Reconstructed Input Signal')
-#ax.plot(reconstructed_new[new_sample_index,1,:].flatten().tolist(),linestyle='--', label='Reconstructed Output Signal')
-#ax.legend()
-#st.pyplot(fig)    
+fig, ax = plt.subplots(nrows=2,ncolumns=1,figsize=(10, 5))
+ax[0].set_title(f'Wave Type: {new_labels[new_sample_index]}, Frequency: {new_frequencies[new_sample_index]} Hz')
+ax[0].set_xlabel('Time steps')
+ax[0].set_ylabel('Normalised Magnitude')
+ax[0].plot(new_signals[new_sample_index,:,0].flatten().tolist(), label='Input Signal')
+ax[0].plot(reconstructed_new[new_sample_index,:,0].flatten().tolist(),linestyle='--', label='Reconstructed Input Signal')
+ax[0].legend()
+ax[1].set_xlabel('Time steps')
+ax[1].set_ylabel('Normalised Magnitude')
+ax[1].plot(new_signals[new_sample_index,:,1].flatten().tolist(), label='Output Signal')
+ax[1].plot(reconstructed_new[new_sample_index,:,1].flatten().tolist(),linestyle='--', label='Reconstructed Output Signal')
+ax[1].legend()
+st.pyplot(fig)    
 
 
