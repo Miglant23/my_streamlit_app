@@ -9,7 +9,7 @@ import os
 
 
 st.write("""
-# Visualisation of the latent feautres of bender data
+# Visualisation of the latent features of bender data
 Latent feautures have been obtained from using a convolutional autoencoder on twin channel bender signals, input and output. The data was able to be compressed into 256 latent feautures
 """)
 
@@ -196,17 +196,22 @@ with torch.no_grad():
 
 new_sample_index=st.number_input('Select the index of the new unseen data to be viewed',min_value=0, max_value=len(new_signals)-1,step=1)
 
-fig, axs = plt.subplots(nrows=2,ncols=1,figsize=(10, 5))
+fig, axs = plt.subplots(nrows=3,ncols=1,figsize=(10, 5))
 axs[0].set_title(f'Wave Type: {new_labels[new_sample_index]}, Frequency: {new_frequencies[new_sample_index]} Hz')
 axs[0].set_ylabel('Normalised Magnitude')
-axs[0].plot(new_signals[new_sample_index,1,:].flatten().tolist(), label='Input Signal')
-axs[0].plot(reconstructed_new[new_sample_index,1,:].flatten().tolist(),linestyle='--', label='Reconstructed Input Signal')
+axs[0].plot(new_signals[new_sample_index,0,:].flatten().tolist(), label='Input Signal')
+axs[0].plot(reconstructed_new[new_sample_index,0,:].flatten().tolist(),linestyle='--', label='Reconstructed Input Signal')
 axs[0].legend()
-axs[1].set_xlabel('Time steps')
 axs[1].set_ylabel('Normalised Magnitude')
-axs[1].plot(new_signals[new_sample_index,0,:].flatten().tolist(), label='Output Signal')
-axs[1].plot(reconstructed_new[new_sample_index,0,:].flatten().tolist(),linestyle='--', label='Reconstructed Output Signal')
+axs[1].plot(new_signals[new_sample_index,1,:].flatten().tolist(), label='Output Signal')
+axs[1].plot(reconstructed_new[new_sample_index,1,:].flatten().tolist(),linestyle='--', label='Reconstructed Output Signal')
 axs[1].legend()
+axs[2].plot(new_signals[new_sample_index,0,:].flatten().tolist()-reconstructed_new[new_sample_index,0,:].flatten().tolist(),label='Input error')
+axs[2].plot(new_signals[new_sample_index,1,:].flatten().tolist()-reconstructed_new[new_sample_index,1,:].flatten().tolist(),label='Output error')
+axs[2].legend()
+axs[2].set_xlabel('Time Steps')
+axs[2].set_title('Original Sigal subtract the Reconstructed Signal')
+
 st.pyplot(fig)    
 
 
