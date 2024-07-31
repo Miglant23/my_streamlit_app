@@ -199,10 +199,12 @@ new_sample_index=st.number_input('Select the index of the new unseen data to be 
 fig, axs = plt.subplots(nrows=3,ncols=1,figsize=(10, 5))
 axs[0].set_title(f'Wave Type: {new_labels[new_sample_index]}, Frequency: {new_frequencies[new_sample_index]} Hz')
 axs[0].set_ylabel('Normalised Magnitude')
+axs[0].set_xlabel('Time Steps')
 axs[0].plot(new_signals[new_sample_index,0,:].flatten().tolist(), label='Input Signal')
 axs[0].plot(reconstructed_new[new_sample_index,0,:].flatten().tolist(),linestyle='--', label='Reconstructed Input Signal')
 axs[0].legend()
 axs[1].set_ylabel('Normalised Magnitude')
+axs[1].set_xlabel('Time Steps')
 axs[1].plot(new_signals[new_sample_index,1,:].flatten().tolist(), label='Output Signal')
 axs[1].plot(reconstructed_new[new_sample_index,1,:].flatten().tolist(),linestyle='--', label='Reconstructed Output Signal')
 axs[1].legend()
@@ -210,8 +212,9 @@ axs[2].plot(new_signals[new_sample_index,0,:].flatten()-reconstructed_new[new_sa
 axs[2].plot(new_signals[new_sample_index,1,:].flatten()-reconstructed_new[new_sample_index,1,:].flatten(),label='Output error')
 axs[2].legend()
 axs[2].set_xlabel('Time Steps')
+axs[2].set_ylabel('Error')
 axs[2].set_title('Original Sigal subtract the Reconstructed Signal')
-
+plt.subplots_adjust(hspace=0.5)
 st.pyplot(fig)    
 
 
