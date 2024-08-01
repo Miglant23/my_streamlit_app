@@ -13,17 +13,6 @@ st.write("""
 Latent features have been obtained from using a convolutional autoencoder on twin channel bender signals, input and output. The data was able to be compressed into 256 latent feautures
 """)
 
-#latent_plot_path=r'C:\Users\nakon\Desktop\my_streamlit_app\latent.html'
-latent_plot_path = os.path.join(os.path.dirname(__file__), 'latent.html')
-try:
-    with open(latent_plot_path, 'r',encoding='utf-8') as f:
-        latent_html = f.read()
-    components.html(latent_html, height=500)
-except FileNotFoundError:
-    st.error(f"The file at {latent_plot_path} was not found.")
-except Exception as e:
-    st.error(f"An error occurred: {e}")
-
 linearPCA_plot_path = os.path.join(os.path.dirname(__file__), 'linearPCA.html')
 try:
     with open(linearPCA_plot_path, 'r',encoding='utf-8') as f:
@@ -59,6 +48,7 @@ except Exception as e:
 
 dataset_path= os.path.join(os.path.dirname(__file__), 'validation_data_noise.pth')
 #dataset=torch.load(r'C:\Users\nakon\Desktop\my_streamlit_app\validation_data_noise.pth')
+@st.cache_data
 dataset=torch.load(dataset_path)
 hash_map = {dataset[i][-1].item(): dataset[i] for i in range(len(dataset))}
 
@@ -165,6 +155,7 @@ class Conv1DAutoencoder(nn.Module):
 model_path = os.path.join(os.path.dirname(__file__), 'MainAutoencoder_V4_256D.pth')
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = Conv1DAutoencoder().to(device)
+@st.cache_resource
 model.load_state_dict(torch.load(model_path, map_location=device))
 model.to(device)
 model.eval()
