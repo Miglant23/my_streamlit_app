@@ -47,10 +47,13 @@ except Exception as e:
 
 
 dataset_path= os.path.join(os.path.dirname(__file__), 'validation_data_noise.pth')
-#dataset=torch.load(r'C:\Users\nakon\Desktop\my_streamlit_app\validation_data_noise.pth')
+
 @st.cache_data
-dataset=torch.load(dataset_path)
-hash_map = {dataset[i][-1].item(): dataset[i] for i in range(len(dataset))}
+def load_dataset(dataset_path):
+    dataset=torch.load(dataset_path)
+    hash_map = {dataset[i][-1].item(): dataset[i] for i in range(len(dataset))}
+    return dataset,hash_map
+dataset,hash_map=load_dataset(dataset_path)
 
 sample_index=st.number_input('Select the index of sample to be viewed',min_value=0, max_value=len(dataset)-1,step=1)
 sample_data=hash_map.get(sample_index)
@@ -152,13 +155,18 @@ class Conv1DAutoencoder(nn.Module):
         return x
 
 #model_path = r'C:\Users\nakon\Desktop\UROP\Autoencoder_SMP\MainAutoencoder_V4_256D.pth'
+
+
 model_path = os.path.join(os.path.dirname(__file__), 'MainAutoencoder_V4_256D.pth')
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = Conv1DAutoencoder().to(device)
 @st.cache_resource
-model.load_state_dict(torch.load(model_path, map_location=device))
-model.to(device)
-model.eval()
+def load_model(model_path):
+    model.load_state_dict(torch.load(model_path, map_location=device))
+    model.to(device)
+    model.eval()
+    return model
+
 with torch.no_grad():
     reconstructed=model(clean_data_tensor)
 
@@ -175,12 +183,17 @@ st.pyplot(fig)
 
 current_dir = os.getcwd()
 new_dataset_path = os.path.join(current_dir, 'dataset_new.pth')
-new_dataset_load = torch.load(new_dataset_path)
-new_signals=new_dataset_load['data']
-new_signals=new_signals[:,[1,0],:]
-new_frequencies=new_dataset_load['frequencies']
-new_labels=new_dataset_load['labels']
-new_indices=new_dataset_load['indices']
+
+@st.cache_data
+def load_new_dataset(new_dataset_path):
+    new_dataset_load = torch.load(new_dataset_path)
+    new_signals=new_dataset_load['data']
+    new_signals=new_signals[:,[1,0],:]
+    new_frequencies=new_dataset_load['frequencies']
+    new_labels=new_dataset_load['labels']
+    new_indices=new_dataset_load['indices']
+    return new_signals,new_frequencies,new_labels,new_indices
+new_signals,new_frequencies,new_labels,new_indices=load_new_dataset(new_dataset_path)
 
 with torch.no_grad():
     reconstructed_new=model(new_signals)
