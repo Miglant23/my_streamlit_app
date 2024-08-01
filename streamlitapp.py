@@ -160,12 +160,12 @@ class Conv1DAutoencoder(nn.Module):
 model_path = os.path.join(os.path.dirname(__file__), 'MainAutoencoder_V4_256D.pth')
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = Conv1DAutoencoder().to(device)
-@st.cache_resource
-def load_model(model_path):
-    model.load_state_dict(torch.load(model_path, map_location=device))
-    model.to(device)
-    model.eval()
-    return model
+#@st.cache_resource
+#def load_model(model_path):
+model.load_state_dict(torch.load(model_path, map_location=device))
+model.to(device)
+model.eval()
+    #return model
 
 with torch.no_grad():
     reconstructed=model(clean_data_tensor)
