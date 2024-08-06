@@ -48,7 +48,7 @@ except Exception as e:
 
 dataset_path= os.path.join(os.path.dirname(__file__), 'validation_data_noise.pth')
 
-@st.cache_data
+#@st.cache_data
 def load_dataset(dataset_path):
     dataset=torch.load(dataset_path)
     hash_map = {dataset[i][-1].item(): dataset[i] for i in range(len(dataset))}
@@ -160,12 +160,10 @@ class Conv1DAutoencoder(nn.Module):
 model_path = os.path.join(os.path.dirname(__file__), 'MainAutoencoder_V4_256D.pth')
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = Conv1DAutoencoder().to(device)
-#@st.cache_resource
-#def load_model(model_path):
 model.load_state_dict(torch.load(model_path, map_location=device))
 model.to(device)
 model.eval()
-    #return model
+
 
 with torch.no_grad():
     reconstructed=model(clean_data_tensor)
@@ -182,18 +180,18 @@ ax.legend()
 st.pyplot(fig)
 
 current_dir = os.getcwd()
-new_dataset_path = os.path.join(current_dir, 'dataset_new.pth')
+new_dataset_path = os.path.join(current_dir, 'dataset_new_NEWEST.pth')
 
 @st.cache_data
 def load_new_dataset(new_dataset_path):
     new_dataset_load = torch.load(new_dataset_path)
     new_signals=new_dataset_load['data']
-    new_signals=new_signals[:,[1,0],:]
     new_frequencies=new_dataset_load['frequencies']
     new_labels=new_dataset_load['labels']
     new_indices=new_dataset_load['indices']
-    return new_signals,new_frequencies,new_labels,new_indices
-new_signals,new_frequencies,new_labels,new_indices=load_new_dataset(new_dataset_path)
+    new_times=new_dataset_load['times']
+    return new_signals,new_frequencies,new_labels,new_indices,new_times
+new_signals,new_frequencies,new_labels,new_indices,new_times=load_new_dataset(new_dataset_path)
 
 with torch.no_grad():
     reconstructed_new=model(new_signals)
@@ -203,20 +201,20 @@ new_sample_index=st.number_input('Select the index of the new unseen data to be 
 fig, axs = plt.subplots(nrows=3,ncols=1,figsize=(10, 8))
 axs[0].set_title(f'Input Signal for: Wave Type: {new_labels[new_sample_index]}, Frequency: {new_frequencies[new_sample_index]} Hz')
 axs[0].set_ylabel('Normalised Magnitude')
-axs[0].set_xlabel('Time Steps')
-axs[0].plot(new_signals[new_sample_index,0,:].flatten().tolist(), label='Input Signal')
-axs[0].plot(reconstructed_new[new_sample_index,0,:].flatten().tolist(),linestyle='--', label='Reconstructed Input Signal')
+axs[0].set_xlabel('Time [ms]')
+axs[0].plot(new_times[new_sample_index,:]*1000,new_signals[new_sample_index,0,:].flatten().tolist(), label='Input Signal')
+axs[0].plot(new_times[new_sample_index,:]*1000,reconstructed_new[new_sample_index,0,:].flatten().tolist(),linestyle='--', label='Reconstructed Input Signal')
 axs[0].legend()
 axs[1].set_ylabel('Normalised Magnitude')
-axs[1].set_xlabel('Time Steps')
+axs[1].set_xlabel('Time [ms]')
 axs[1].set_title('Output Signal')
-axs[1].plot(new_signals[new_sample_index,1,:].flatten().tolist(), label='Output Signal')
-axs[1].plot(reconstructed_new[new_sample_index,1,:].flatten().tolist(),linestyle='--', label='Reconstructed Output Signal')
+axs[1].plot(new_times[new_sample_index,:]*1000,new_signals[new_sample_index,1,:].flatten().tolist(), label='Output Signal')
+axs[1].plot(new_times[new_sample_index,:]*1000,reconstructed_new[new_sample_index,1,:].flatten().tolist(),linestyle='--', label='Reconstructed Output Signal')
 axs[1].legend()
-axs[2].plot(abs(new_signals[new_sample_index,0,:].flatten()-reconstructed_new[new_sample_index,0,:].flatten()),label='Input error')
-axs[2].plot(abs(new_signals[new_sample_index,1,:].flatten()-reconstructed_new[new_sample_index,1,:].flatten()),label='Output error')
+axs[2].plot(new_times[new_sample_index,:]*1000,abs(new_signals[new_sample_index,0,:].flatten()-reconstructed_new[new_sample_index,0,:].flatten()),label='Input error')
+axs[2].plot(new_times[new_sample_index,:]*1000,abs(new_signals[new_sample_index,1,:].flatten()-reconstructed_new[new_sample_index,1,:].flatten()),label='Output error')
 axs[2].legend()
-axs[2].set_xlabel('Time Steps')
+axs[2].set_xlabel('Time [ms]')
 axs[2].set_ylabel('Absolute Error')
 axs[2].set_title('Original Signal subtract the Reconstructed Signal')
 plt.subplots_adjust(hspace=1)
