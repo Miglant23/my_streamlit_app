@@ -222,3 +222,27 @@ axs[2].set_ylabel('Absolute Error')
 axs[2].set_title('Original Signal subtract the Reconstructed Signal')
 plt.subplots_adjust(hspace=0.5)
 st.pyplot(fig)   
+
+#'Validation' if i < 795 else 'Training' if i < 1575
+
+W_labels=[values[2].item() for values in hash_map.values()]
+label_mapping={0:'Sine',1:'Square',2:'Tri'}
+W_labels=[label_mapping[label] for label in W_labels]
+W_freq=[values[3] for values in hash_map.values()]
+W_index=[values[4] for values in hash_map.values()]
+
+df_indices=np.append(W_index,new_indices)
+df_freqs=np.append(W_freq,new_frequencies)
+df_labels=np.append(W_labels,new_labels)
+types=np.array(['Validation' if i < 795 else 'Training' if i < 1575 else 'Unseen' for i in range(len(df_indices))])
+
+df=pd.DataFrame({
+    'Index':df_indices,
+    'Label':df_labels,
+    'Frequency [Hz]':df_freqs,
+    'Source':types
+})
+df.set_index('Index', inplace=True)
+
+st.write("All the data as a scrollable element")
+st.dataframe(df)
